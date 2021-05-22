@@ -16,21 +16,12 @@ async function hashPassword(password) {
  async function validatePassword(plainPassword, hashedPassword) {
   return await bcrypt.compare(plainPassword, hashedPassword);
  }
-//  app.post('/api/signin', (req, res) => {
-//   const user = {
-//       id: 1,
-//       username: "johndoe",
-//       email: "john.doe@test.com"
-//   }
-//   jwt.sign({user},'SuperSecRetKey', { expiresIn: 60 * 60 }, (err, token) => {
-//       res.json({token});
-//   });
-// });
+
  exports.signup = async (req, res, next) => {
   try {
-   const { email, password, userType } = req.body
+   const { first_name, last_name, email, password, userType } = req.body
    const hashedPassword = await hashPassword(password);
-   const newUser = new User({ email, password: hashedPassword, userType: userType || "admin" });
+   const newUser = new User({first_name, last_name, email, password: hashedPassword, userType: userType || "admin" });
    const accessToken = jwt.sign({ userId: newUser.userId }, process.env.JWT_SECRET, {
     expiresIn: "1d"
    });
@@ -141,21 +132,22 @@ exports.allowIfLoggedin = async (req, res, next) => {
    next(error);
   }
 }
+/////////////////////////////
 ///// image upload ////////////
-function fileFilter (req, file, cb) {    
-  // Allowed ext
-   const filetypes = /jpeg|jpg|png|gif/;
+//////////////////////////////////
+// function fileFilter (req, file, cb) {    
+//   // Allowed ext
+//    const filetypes = /jpeg|jpg|png|gif/;
 
  // Check ext
-  const extname =  filetypes.test(path.extname(file.originalname).toLowerCase());
- // Check mime
- const mimetype = filetypes.test(file.mimetype);
- if(mimetype && extname){
-     return cb(null,true);
- } else {
-     cb('Error: Images Only!');
- }
-}
+ // const extname =  filetypes.test(path.extname(file.originalname).toLowerCase());
+ // Check profile
+ // const profiletype = filetypes.test(file.profiletype);
+//  if(profiletype && extname){
+//      return cb(null,true);
+//  } else {
+//      cb('Error: Images Only!');
+//  }
 var storage = multer.diskStorage({   
   destination: function(req, file, cb) { 
      cb(null, './uploads');    
@@ -176,6 +168,32 @@ app.post("/profilePicture", (req, res) => {
     } 
 });
 });
+////// pagination //////
+app.get('/users/pagination',(req,res) => {
+  var pageNo = parseInt(req.query.pageNo)
+  var size = parseInt(req.query.size)
+  var query = {}
+  if(pageNo < 0 || pageNo === 0) {
+        response = {"error" : true,"message" : "invalid page number, should start with 1"};
+        return res.json(response)
+  }
+  query.skip = size * (pageNo - 1)
+  query.limit = size
+  mongoOp.find({},{},query,function(err,data) {
+    // Mongo command to fetch all data from collection.
+        if(err) {
+            response = {"error" : true,"message" : "Error fetching data"};
+        } else {
+            response = {"error" : false,"message" : data};
+        }
+        res.json(response);
+    });
+})
+// sortClause = {};
+// sortClause.user=parseInt(-1);
+// let properties = await Property.find({'status':{$in:[1,2]}}).populate({path: 'user',
+//   model: 'User',select: 'first_name last_name email userType'}).populate({path: 'vegitable',
+//   model: 'Vegitable',select: 'name'}).sort(sortClause).skip(skip).limit(perpage).exec();
  ///////////////////////////////////////////////////
 // Retrieve and return all users from the database.
 // exports.findAll = (req, res) => {
