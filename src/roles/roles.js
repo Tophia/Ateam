@@ -7,13 +7,13 @@ ac.grant("basic")
  .readOwn("profile")
  .updateOwn("profile")
  
-ac.grant("supervisor")
+ac.grant("manager")
  .extend("basic")
  .readAny("profile")
  
 ac.grant("admin")
  .extend("basic")
- .extend("supervisor")
+ .extend("manager")
  .updateAny("profile")
  .deleteAny("profile")
  
