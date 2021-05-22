@@ -9,10 +9,6 @@ authRoute = require("./src/routes/authRoute"),
   passport = require("passport"),
   localStrategy = require("passport-local"),
   require("dotenv").config();
-  ////////////////////////////////////////
-// require("dotenv").config({
-//   path: path.join(__dirname, "../.env")
-//  });
   
 // create express app
   app = express();
@@ -26,14 +22,6 @@ app.use(bodyParser.json())
 const dbConfig = require('./config/db.config.js');
 const mongoose = require('mongoose');
 //passport---//
-// mongoose.connect("mongodb://localhost/Ateam", {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// });
-////////////////////////======
-//  const app = express();
-  
-//  const PORT = process.env.PORT || 3000;
   
  mongoose
   .connect('mongodb://localhost:27017/Ateam')
@@ -91,7 +79,6 @@ app.use('/api/vegitables', vegRoutes)
 app.use(authRoute);
 app.use(postRoute);
 ///----///
-//app.use('/', routes);
 // listen for requests
 app.listen(port, () => {
    console.log(`Node server is listening on port ${port}`);

@@ -22,7 +22,7 @@ exports.login = function (req, res) {
 };
 exports.register = function (req, res) {
   User.register(
-    new User({ name: req.body.name, username: req.body.username }),
+    new User({ userType: req.body.userType, first_name: req.body.first_name }),
     req.body.password,
     function (err, msg) {
       if (err) {
